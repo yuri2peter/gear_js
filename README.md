@@ -1,2 +1,2 @@
-# gear_js
-Node.js web framework
+# GearJs
+Node.js web application framework
