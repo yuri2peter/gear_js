@@ -3,16 +3,13 @@ console.log('Module gear loaded.');
 const util = require('util');
 const http = require('http');
 const url = require("url");
-const GearServerHandle = require("./gear_server_handle");
-const GearRouter = require("./gear_router");
+const GearServerHandle = require("./lib/gear_server_handle");
+const GearRouter = require("./lib/gear_router");
 
+require("./lib/gear_debug").processErrorCatch(); //全局错误捕捉
 
 module.exports=class Gear{
 
-    /**
-     * @param {options}
-     * @return Gear
-     * */
     static getInstance(){
         return new Gear();
     }
@@ -51,7 +48,7 @@ module.exports=class Gear{
     //关闭http服务
     closeServer(){
         this.server.close();
-        console.log('Server was closed.')
+        console.log('Server was closed.');
         return this;
     }
 };

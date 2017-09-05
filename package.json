@@ -2,6 +2,6 @@
   "name": "gear",
   "version": "0.0.1",
   "dependencies": {
-    
+    "ejs": "^2.5.7"
   }
 }

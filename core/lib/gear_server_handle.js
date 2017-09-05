@@ -2,9 +2,9 @@
 const util = require('util');
 const http = require('http');
 const url = require("url");
-const querystring = require('querystring')
-const events = require('events')
-const gear_static = require('gear_static')
+const querystring = require('querystring');
+const events = require('events');
+const gear_static = require('./gear_static');
 
 module.exports=class GearServerHandle{
     constructor(gear,req,res,callback_ready){
@@ -36,8 +36,9 @@ module.exports=class GearServerHandle{
         return pre;
     }
 
-    echo(value){
-        this.res.write(value)
+    echo(value,end=false){
+        this.res.write(value);
+        !end || this.res.end();
     }
 
-}
+};

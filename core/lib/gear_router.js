@@ -2,7 +2,7 @@
 const util = require('util');
 const http = require('http');
 const url = require("url");
-const rule = require("../routers/rule");
+const rule = require(global.PATH_GEAR+"/routers/rule");
 
 module.exports=class GearRouter{
     constructor(gear){
