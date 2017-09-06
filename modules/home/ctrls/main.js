@@ -1,8 +1,19 @@
 module.exports=class{
-    constructor(handle){
-        this.handle=handle
+    index(handle){
+        handle.assign('pathBase',handle.req.pathBase);
+        handle.render();
+        handle.end();
     }
-    index(){
-        this.handle.echo('gogogo!1',true);
+
+    post(handle){
+        handle.loadBody(body=>{
+            handle.assign({
+                headers:handle.inspect(handle.req.headers),
+                raw:handle.bodyParser.raw(body),
+                parsed:handle.inspect(handle.bodyParser.multipart(body,handle)),
+            });
+            handle.render();
+            handle.end();
+        });
     }
 };

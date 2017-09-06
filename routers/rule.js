@@ -1,7 +1,7 @@
 const fs = require("fs");
-const GearStatic = require(global.PATH_GEAR+'/core/lib/gear_static');
-const GearView = require(global.PATH_GEAR+'/core/lib/gear_view');
-const gear_util=require(global.PATH_GEAR+'/core/lib/gear_util');
+const GearStatic = require(global.PATH_GEAR+'/lib/gear_static');
+const GearView = require(global.PATH_GEAR+'/lib/gear_view');
+const gear_util=require(global.PATH_GEAR+'/lib/gear_util');
 
 module.exports=[
     {
@@ -16,8 +16,7 @@ module.exports=[
                     handle.res.writeHeader(200,{
                         'Content-Type':'application/x-ico'
                     });
-                    handle.echo(data);
-                    handle.res.end('');//end
+                    handle.echo(data,true);
                 }
             });
             return true;
@@ -28,7 +27,7 @@ module.exports=[
         'preg':/^\/public\//,
         'handle':handle=>{
             let gearStatic=new GearStatic(handle);
-            gearStatic.response('.'+handle.path);
+            gearStatic.response('.'+handle.req.pathname);
             return true;
         }
     },
@@ -37,44 +36,30 @@ module.exports=[
         preg:/.*?/,
         'handle':handle=>{
             //解析出 module/ctrl/action
-            let paths=gear_util.skipEmptyElementForArray(handle.path.split('/'));
-            let module,ctrl,action;
+            let paths=gear_util.skipEmptyElementForArray(handle.req.pathname.split('/'));
             switch (paths.length){
                 case 0:
-                    module='home';
-                    ctrl='main';
-                    action='index';
+                    handle.req.moduleName='home';
+                    handle.req.ctrlName='main';
+                    handle.req.actionName='index';
                     break;
                 case 1:
-                    module=paths[0];
-                    ctrl='main';
-                    action='index';
+                    handle.req.moduleName=paths[0];
+                    handle.req.ctrlName='main';
+                    handle.req.actionName='index';
                     break;
                 case 2:
-                    module=paths[0];
-                    ctrl=paths[1];
-                    action='index';
+                    handle.req.moduleName=paths[0];
+                    handle.req.ctrlName=paths[1];
+                    handle.req.actionName='index';
                     break;
                 default:
-                    module=paths[0];
-                    ctrl=paths[1];
-                    action=paths[2];
+                    handle.req.moduleName=paths[0];
+                    handle.req.ctrlName=paths[1];
+                    handle.req.actionName=paths[2];
                     break;
             }
-            let controller=null;
-            let require_path=global.PATH_GEAR+'/modules/'+module+'/ctrls/'+ctrl;
-            try {
-                //尝试实例化控制器
-                !handle.gear.options.debug|| delete require.cache[require.resolve(require_path)];
-                let CtrlClass=require(require_path);
-                controller=new CtrlClass(handle);
-                (controller[action])();//运行方法
-            }catch (e){
-                console.log(e);
-                !handle.gear.options.debug|| console.log('404:'+require_path);
-                handle.res.writeHeader(404,{});
-                handle.echo('404 not found.',true);
-            }
+            handle.runCtrl();
             return true;
         }
     },
