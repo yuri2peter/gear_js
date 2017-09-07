@@ -16,7 +16,7 @@ module.exports=[
                     handle.res.writeHeader(200,{
                         'Content-Type':'application/x-ico'
                     });
-                    handle.echo(data,true);
+                    handle.end(data);
                 }
             });
             return true;
@@ -68,7 +68,7 @@ module.exports=[
         preg:/.*?/,
         'handle':handle=>{
             handle.res.writeHeader(404,{});
-            handle.echo('404 not found.',true);
+            handle.end('404 not found.');
             return true;
         }
     },
